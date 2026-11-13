@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Meals | Meal Planner</title>
+
+    <link rel="stylesheet"
+    href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        .meal-form {
+            max-width: 650px;
+            width: 100%;
+            margin: 30px auto;
+            text-align: left;
+        }
+
+        .meal-form input,
+        .meal-form select,
+        .meal-form textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0 18px;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+            font-size: 16px;
+        }
+
+        .recipe-result {
+            background: #f0f5eb;
+            padding: 15px;
+            margin: 12px 0;
+            border-radius: 10px;
+            text-align: left;
+        }
+
+        .recipe-result img {
+            width: 100px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .recipe-result button {
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        #searchMessage {
+            margin: 15px 0;
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar">
+    <h2>🥗 Meal Planner</h2>
+
+    <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/meals">My Meals</a>
+        <a href="/shopping">Shopping List</a>
+        <a href="/nutrition">Nutrition Guide</a>
+    </div>
+</nav>
+
+<section class="features">
+
+    <h1>My Meals</h1>
+    <p>Add your meals and automatically discover their ingredients!</p>
+
+    <div class="card meal-form">
+
+        <form method="POST">
+
+            <label>Dish Name</label>
+            <input type="text" id="dishName"
+                   placeholder="Example: Vegetable Biryani"
+                   required>
+
+            <button type="button" class="btn" id="findButton">
+                🔍 Find Ingredients
+            </button>
+
+            <p id="searchMessage" aria-live="polite"></p>
+
+            <div id="recipeResults"></div>
+
+            <hr style="margin:25px 0;">
+
+            <label>Meal Name</label>
+            <input type="text" name="meal_name"
+                   id="mealName" required>
+
+            <label>Meal Type</label>
+            <select name="meal_type" required>
+                <option value="">Select meal type</option>
+                <option>Breakfast</option>
+                <option>Lunch</option>
+                <option>Dinner</option>
+                <option>Snack</option>
+            </select>
+
+            <label>Meal Date</label>
+            <input type="date" name="meal_date" required>
+
+            <label>Ingredients</label>
+            <textarea name="ingredients" id="ingredients"
+                      rows="5" required
+                      placeholder="Ingredients will appear here..."></textarea>
+
+            <button type="submit" class="btn">
+                Save Meal
+            </button>
+
+        </form>
+
+    </div>
+
+    <h2>Saved Meals</h2>
+
+    <div class="feature-container">
+
+        {% for meal in meals %}
+
+        <div class="card">
+            <h3>{{ meal.meal_name }}</h3>
+            <p>Type: {{ meal.meal_type }}</p>
+            <p>Date: {{ meal.meal_date }}</p>
+            <p>Ingredients: {{ meal.ingredients }}</p>
+
+            <br>
+
+            <a href="/delete/{{ meal.id }}">Delete</a>
+        </div>
+
+        {% else %}
+
+        <p>No meals added yet!</p>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+<script>
+const findButton = document.getElementById("findButton");
+const dishInput = document.getElementById("dishName");
+const message = document.getElementById("searchMessage");
+const results = document.getElementById("recipeResults");
+
+findButton.addEventListener("click", async function () {
+
+    const dish = dishInput.value.trim();
+
+    if (!dish) {
+        message.textContent = "Please enter a dish name.";
+        return;
+    }
+
+    findButton.disabled = true;
+    message.textContent = "Searching for recipes...";
+    results.replaceChildren();
+
+    try {
+        const response = await fetch("/find-ingredients", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ dish: dish })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || "Recipe search failed.");
+        }
+
+        message.textContent = "Choose the recipe that matches your dish:";
+
+        data.meals.forEach(function (meal) {
+
+            const card = document.createElement("div");
+            card.className = "recipe-result";
+
+            const title = document.createElement("h3");
+            title.textContent = meal.name;
+
+            const image = document.createElement("img");
+            image.src = meal.image;
+            image.alt = meal.name;
+
+            const ingredientList = document.createElement("p");
+
+            ingredientList.textContent = meal.ingredients
+                .map(item => item.measure + " " + item.name)
+                .join(", ");
+
+            const selectButton = document.createElement("button");
+            selectButton.type = "button";
+            selectButton.className = "btn";
+            selectButton.textContent = "Use This Recipe";
+
+            selectButton.addEventListener("click", function () {
+
+                document.getElementById("mealName").value = meal.name;
+
+                document.getElementById("ingredients").value =
+                    meal.ingredients.map(item =>
+                        item.measure + " " + item.name
+                    ).join("\n");
+
+                message.textContent =
+                    "Ingredients added! You can edit them before saving.";
+
+                results.replaceChildren();
+            });
+
+            card.append(title, image, ingredientList, selectButton);
+            results.appendChild(card);
+        });
+
+    } catch (error) {
+        message.textContent = error.message;
+    }
+
+    findButton.disabled = false;
+});
+</script>
+
+</body>
+</html>

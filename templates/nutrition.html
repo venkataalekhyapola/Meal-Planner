@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Nutrition Guide | Meal Planner</title>
+
+    <link rel="stylesheet"
+    href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <h2>🥗 Meal Planner</h2>
+
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/meals">My Meals</a>
+            <a href="/shopping">Shopping List</a>
+            <a href="/nutrition">Nutrition Guide</a>
+        </div>
+    </nav>
+
+    <section class="features">
+
+        <h1>Personal Nutrition Guide</h1>
+
+        <p>
+            Enter your basic details to get started
+            with your meal planning journey.
+        </p>
+
+        <div class="card" style="margin:35px auto; max-width:500px; width:100%;">
+
+            <form method="POST">
+
+                <label>Age (years)</label>
+                <input type="number" name="age"
+                       min="1" max="120" required>
+
+                <br><br>
+
+                <label>Height (cm)</label>
+                <input type="number" name="height"
+                       min="30" max="250" step="0.1" required>
+
+                <br><br>
+
+                <label>Weight (kg)</label>
+                <input type="number" name="weight"
+                       min="1" max="500" step="0.1" required>
+
+                <br><br>
+
+                <button type="submit" class="btn">
+                    Get Nutrition Guidance
+                </button>
+
+            </form>
+
+        </div>
+
+        {% if profile %}
+
+        <div class="card" style="margin:30px auto; max-width:600px; width:100%;">
+
+            <h2>Your Profile</h2>
+
+            <p>Age: {{ profile.age }} years</p>
+            <p>Height: {{ profile.height }} cm</p>
+            <p>Weight: {{ profile.weight }} kg</p>
+
+            <hr style="margin:20px 0;">
+
+            <h2>Balanced Meal Guidance</h2>
+
+            <p>🥦 Include a variety of vegetables and fruits.</p>
+
+            <p>🥚 Include protein foods such as dal, beans,
+               eggs, paneer or other suitable options.</p>
+
+            <p>🍚 Include grains such as rice, roti or millets.</p>
+
+            <p>🥛 Include calcium-rich foods such as milk,
+               curd or suitable alternatives.</p>
+
+            <p>🥜 Include healthy fat sources such as nuts
+               and seeds.</p>
+
+            <br>
+
+            <p>
+                <b>Note:</b> Exact protein, carbohydrate and
+                fat requirements depend on several factors.
+                This page provides general meal-planning
+                guidance, not personalised medical nutrition
+                targets. Consult a qualified dietitian for
+                individual recommendations, particularly
+                for children and teenagers.
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </section>
+
+</body>
+</html>

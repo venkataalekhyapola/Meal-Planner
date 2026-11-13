@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Meal Planner</title>
+
+    <link rel="stylesheet"
+    href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <h2>🥗 Meal Planner</h2>
+
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/meals">My Meals</a>
+            <a href="/shopping">Shopping List</a>
+        </div>
+    </nav>
+
+    <section class="features">
+
+        <h1>My Dashboard</h1>
+        <p>Welcome to your smart meal planning dashboard!</p>
+
+        <br>
+
+        <a href="/meals" class="btn">+ Add New Meal</a>
+
+        <h2 style="margin-top:40px;">Your Planned Meals</h2>
+
+        {% if meals %}
+
+        <div class="feature-container">
+
+            {% for meal in meals %}
+
+            <div class="card">
+                <h3>{{ meal.meal_name }}</h3>
+                <p><b>Type:</b> {{ meal.meal_type }}</p>
+                <p><b>Date:</b> {{ meal.meal_date }}</p>
+                <p><b>Ingredients:</b> {{ meal.ingredients }}</p>
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+
+        <p style="margin-top:25px;">
+            No meals planned yet. Start by adding your first meal!
+        </p>
+
+        {% endif %}
+
+    </section>
+
+</body>
+</html>

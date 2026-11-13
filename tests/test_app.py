@@ -7,6 +7,9 @@ sys.path.insert(
 )
 
 from app import app
+from app import create_table
+
+create_table()
 
 
 def test_home_page():

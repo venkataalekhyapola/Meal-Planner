@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Shopping List - Meal Planner</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f7f2;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+        }
+
+        h1 {
+            color: #355e3b;
+        }
+
+        .item {
+            background: #eef4eb;
+            padding: 15px;
+            margin: 12px 0;
+            border-radius: 8px;
+        }
+
+        a {
+            color: #355e3b;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🛒 Shopping List</h1>
+
+    <p>Your ingredients for planned meals, all in one place.</p>
+
+    <h2>Required Ingredients</h2>
+
+    {% for meal in meals %}
+
+    <div class="item">
+        <h3>{{ meal[1] }}</h3>
+        <p>Meal Type: {{ meal[2] }}</p>
+        <p>Ingredients: {{ meal[4] }}</p>
+    </div>
+
+    {% else %}
+
+    <p>No ingredients available. Add meals first!</p>
+
+    {% endfor %}
+
+    <br>
+
+    <a href="/dashboard">← Back to Dashboard</a>
+
+</div>
+
+</body>
+</html>
